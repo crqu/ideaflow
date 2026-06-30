@@ -62,6 +62,8 @@ def check_file_existence(root: Path) -> dict:
         "IdeaFlowWatch/Views/CaptureView.swift",
         "IdeaFlowWatch/Views/StatusView.swift",
         "IdeaFlow/Services/PhoneSessionManager.swift",
+        # Phase 5: Integration + observability
+        "Shared/Utilities/PipelineMetrics.swift",
     ]
 
     existing = []
@@ -105,14 +107,20 @@ def check_anti_patterns(swift_files: list[Path]) -> dict:
                     "severity": "error",
                 })
 
-            force_unwrap_match = re.search(r'[a-zA-Z_]\w*!(?!\s*=)', line)
-            if force_unwrap_match and "IBOutlet" not in line and "@IBOutlet" not in line:
-                issues.append({
-                    "file": str(filepath),
-                    "line": i,
-                    "issue": "force_unwrap",
-                    "severity": "warning",
-                })
+            # Skip lines that are inside string literals (rough heuristic: odd number of quotes before the !)
+            # Also skip lines where the ! is preceded by text inside quotes
+            stripped = line.lstrip()
+            if not stripped.startswith("//") and not stripped.startswith("/*"):
+                # Remove string literals before checking for force unwraps
+                line_without_strings = re.sub(r'"[^"\\]*(?:\\.[^"\\]*)*"', '""', line)
+                force_unwrap_match = re.search(r'[a-zA-Z_]\w*!(?!\s*=)', line_without_strings)
+                if force_unwrap_match and "IBOutlet" not in line and "@IBOutlet" not in line:
+                    issues.append({
+                        "file": str(filepath),
+                        "line": i,
+                        "issue": "force_unwrap",
+                        "severity": "warning",
+                    })
 
     error_count = sum(1 for i in issues if i["severity"] == "error")
     warning_count = sum(1 for i in issues if i["severity"] == "warning")
@@ -190,6 +198,44 @@ def count_files(root: Path) -> dict:
     }
 
 
+def check_observability(root: Path) -> dict:
+    """Check logging/observability coverage in service files."""
+    service_dirs = ["IdeaFlow/Services", "IdeaFlowWatch/Services"]
+    service_files = []
+    for d in service_dirs:
+        service_files.extend((root / d).glob("*.swift"))
+
+    if not service_files:
+        return {"files_checked": 0, "files_with_logging": 0, "score": 0.0}
+
+    files_with_logging = 0
+    details = []
+
+    for filepath in service_files:
+        content = filepath.read_text()
+        has_logging = "IdeaFlowLogger" in content or "Logger(" in content
+        details.append({
+            "file": filepath.name,
+            "has_logging": has_logging,
+        })
+        if has_logging:
+            files_with_logging += 1
+
+    score = files_with_logging / len(service_files) if service_files else 0.0
+
+    has_metrics = (root / "Shared/Utilities/PipelineMetrics.swift").exists()
+    if has_metrics and score >= 0.8:
+        score = min(1.0, score + 0.1)
+
+    return {
+        "files_checked": len(service_files),
+        "files_with_logging": files_with_logging,
+        "has_pipeline_metrics": has_metrics,
+        "details": details,
+        "score": round(score, 2),
+    }
+
+
 def main():
     root = Path(__file__).parent.parent
 
@@ -199,6 +245,7 @@ def main():
     anti_patterns = check_anti_patterns(swift_files)
     lint_result = run_swiftlint(root)
     file_counts = count_files(root)
+    observability = check_observability(root)
 
     capability_score = file_check["score"]
     if capability_score >= 0.8:
@@ -209,7 +256,7 @@ def main():
         "lint": lint_result["score"] if lint_result.get("score") is not None else anti_patterns["score"],
         "tests": round(file_counts["test_coverage_ratio"], 2),
         "type_check": 1.0 if file_check["score"] == 1.0 else 0.5,
-        "observability": 0.0,
+        "observability": observability["score"],
     }
 
     report = {
@@ -219,6 +266,7 @@ def main():
             "anti_patterns": anti_patterns,
             "lint": lint_result,
             "file_counts": file_counts,
+            "observability": observability,
         },
         "summary": {
             "total_swift_files": file_counts["swift_files"],

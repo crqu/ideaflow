@@ -111,10 +111,17 @@ struct SettingsView: View {
     }
 
     private func saveApiKey() {
-        guard !apiKeyInput.isEmpty else { return }
+        let trimmedKey = apiKeyInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedKey.isEmpty else { return }
+
+        guard trimmedKey.hasPrefix("sk-ant-") else {
+            alertMessage = "Invalid API key format. Keys should start with 'sk-ant-'"
+            showingAlert = true
+            return
+        }
 
         do {
-            try KeychainHelper.saveApiKey(apiKeyInput)
+            try KeychainHelper.saveApiKey(trimmedKey)
             hasApiKey = true
             apiKeyInput = ""
             alertMessage = "API key saved successfully"
@@ -149,6 +156,14 @@ struct SettingsView: View {
             }
 
             defer { url.stopAccessingSecurityScopedResource() }
+
+            var isDirectory: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
+                  isDirectory.boolValue else {
+                alertMessage = "Selected path is not a valid folder"
+                showingAlert = true
+                return
+            }
 
             Task {
                 await obsidianWriter.setVaultURL(url)
