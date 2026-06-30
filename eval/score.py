@@ -30,6 +30,7 @@ def find_swift_files(root: Path) -> list[Path]:
 def check_file_existence(root: Path) -> dict:
     """Check that expected project files exist."""
     expected_files = [
+        # Phase 1: Project scaffold
         "project.yml",
         "CLAUDE.md",
         "factory.md",
@@ -38,6 +39,14 @@ def check_file_existence(root: Path) -> dict:
         "IdeaFlowWatch/IdeaFlowWatchApp.swift",
         "IdeaFlowWatch/Views/ContentView.swift",
         "Shared/Models/VoiceNote.swift",
+        # Phase 2: Shared data models + utilities
+        "Shared/Models/ClaudeResponse.swift",
+        "Shared/Utilities/KeychainHelper.swift",
+        "Shared/Utilities/DateFormatters.swift",
+        "Shared/Utilities/Logger.swift",
+        "Tests/SharedTests/VoiceNoteTests.swift",
+        "Tests/SharedTests/DateFormattersTests.swift",
+        "Tests/SharedTests/ClaudeResponseTests.swift",
     ]
 
     existing = []

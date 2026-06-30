@@ -80,3 +80,17 @@ targets:
         CFBundleExecutable: $(EXECUTABLE_NAME)
         WKApplication: true
         WKCompanionAppBundleIdentifier: com.ideaflow.app
+
+  SharedTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/SharedTests
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ideaflow.SharedTests
+        GENERATE_INFOPLIST_FILE: true
+        INFOPLIST_KEY_CFBundleDisplayName: SharedTests
+    dependencies:
+      - target: IdeaFlow
