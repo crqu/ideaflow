@@ -1,0 +1,82 @@
+name: IdeaFlow
+options:
+  bundleIdPrefix: com.ideaflow
+  deploymentTarget:
+    iOS: "17.0"
+    watchOS: "10.0"
+  xcodeVersion: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    ENABLE_USER_SCRIPT_SANDBOXING: false
+
+targets:
+  IdeaFlow:
+    type: application
+    platform: iOS
+    sources:
+      - path: IdeaFlow
+        excludes:
+          - "*.entitlements"
+      - path: Shared
+    settings:
+      base:
+        INFOPLIST_FILE: IdeaFlow/Info.plist
+        CODE_SIGN_ENTITLEMENTS: IdeaFlow/IdeaFlow.entitlements
+        PRODUCT_BUNDLE_IDENTIFIER: com.ideaflow.app
+        GENERATE_INFOPLIST_FILE: false
+    entitlements:
+      path: IdeaFlow/IdeaFlow.entitlements
+    info:
+      path: IdeaFlow/Info.plist
+      properties:
+        CFBundleName: IdeaFlow
+        CFBundleDisplayName: IdeaFlow
+        CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
+        CFBundleVersion: "1"
+        CFBundleShortVersionString: "1.0"
+        CFBundlePackageType: APPL
+        CFBundleExecutable: $(EXECUTABLE_NAME)
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        NSDocumentsFolderUsageDescription: "IdeaFlow needs access to your Documents folder to save notes to your Obsidian vault."
+
+  IdeaFlowWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - path: IdeaFlowWatch
+        excludes:
+          - "*.entitlements"
+      - path: Shared
+    settings:
+      base:
+        INFOPLIST_FILE: IdeaFlowWatch/Info.plist
+        CODE_SIGN_ENTITLEMENTS: IdeaFlowWatch/IdeaFlowWatch.entitlements
+        PRODUCT_BUNDLE_IDENTIFIER: com.ideaflow.app.watchkitapp
+        GENERATE_INFOPLIST_FILE: false
+        WATCHOS_DEPLOYMENT_TARGET: "10.0"
+    entitlements:
+      path: IdeaFlowWatch/IdeaFlowWatch.entitlements
+    info:
+      path: IdeaFlowWatch/Info.plist
+      properties:
+        CFBundleName: IdeaFlow
+        CFBundleDisplayName: IdeaFlow
+        CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
+        CFBundleVersion: "1"
+        CFBundleShortVersionString: "1.0"
+        CFBundlePackageType: APPL
+        CFBundleExecutable: $(EXECUTABLE_NAME)
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: com.ideaflow.app
