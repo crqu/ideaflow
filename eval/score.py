@@ -57,6 +57,11 @@ def check_file_existence(root: Path) -> dict:
         "IdeaFlow/Views/NoteDetailView.swift",
         "Tests/IdeaFlowTests/ClaudeClientTests.swift",
         "Tests/IdeaFlowTests/ObsidianWriterTests.swift",
+        # Phase 4: watchOS app services and views
+        "IdeaFlowWatch/Services/WatchSessionManager.swift",
+        "IdeaFlowWatch/Views/CaptureView.swift",
+        "IdeaFlowWatch/Views/StatusView.swift",
+        "IdeaFlow/Services/PhoneSessionManager.swift",
     ]
 
     existing = []
