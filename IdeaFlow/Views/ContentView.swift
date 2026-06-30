@@ -1,14 +1,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Bindable var viewModel: NotesViewModel
+
     var body: some View {
         TabView {
-            NotesTabView()
+            NoteListView(viewModel: viewModel)
                 .tabItem {
                     Label("Notes", systemImage: "note.text")
                 }
 
-            SettingsTabView()
+            SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
@@ -16,37 +18,6 @@ struct ContentView: View {
     }
 }
 
-struct NotesTabView: View {
-    var body: some View {
-        NavigationStack {
-            List {
-                Text("No voice notes yet")
-                    .foregroundStyle(.secondary)
-            }
-            .navigationTitle("Voice Notes")
-        }
-    }
-}
-
-struct SettingsTabView: View {
-    var body: some View {
-        NavigationStack {
-            List {
-                Section("Claude API") {
-                    Text("API key not configured")
-                        .foregroundStyle(.secondary)
-                }
-
-                Section("Obsidian Vault") {
-                    Text("Vault folder not selected")
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .navigationTitle("Settings")
-        }
-    }
-}
-
 #Preview {
-    ContentView()
+    ContentView(viewModel: NotesViewModel())
 }

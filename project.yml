@@ -94,3 +94,20 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: SharedTests
     dependencies:
       - target: IdeaFlow
+
+  IdeaFlowTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/IdeaFlowTests
+      - path: IdeaFlow
+        excludes:
+          - "*.entitlements"
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ideaflow.IdeaFlowTests
+        GENERATE_INFOPLIST_FILE: true
+        INFOPLIST_KEY_CFBundleDisplayName: IdeaFlowTests
+    dependencies:
+      - target: IdeaFlow

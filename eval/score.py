@@ -47,6 +47,16 @@ def check_file_existence(root: Path) -> dict:
         "Tests/SharedTests/VoiceNoteTests.swift",
         "Tests/SharedTests/DateFormattersTests.swift",
         "Tests/SharedTests/ClaudeResponseTests.swift",
+        # Phase 3: iOS companion app services and views
+        "IdeaFlow/Services/ClaudeClient.swift",
+        "IdeaFlow/Services/ObsidianWriter.swift",
+        "IdeaFlow/Services/NoteProcessor.swift",
+        "IdeaFlow/ViewModels/NotesViewModel.swift",
+        "IdeaFlow/Views/SettingsView.swift",
+        "IdeaFlow/Views/NoteListView.swift",
+        "IdeaFlow/Views/NoteDetailView.swift",
+        "Tests/IdeaFlowTests/ClaudeClientTests.swift",
+        "Tests/IdeaFlowTests/ObsidianWriterTests.swift",
     ]
 
     existing = []
